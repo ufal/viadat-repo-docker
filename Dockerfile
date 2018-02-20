@@ -22,8 +22,8 @@ WORKDIR /tmp
 
 #DCEVM installation
 #Since DCEVM for Xenial seems kind of broken, we download it from zetzy
-RUN wget http://mirrors.kernel.org/ubuntu/pool/universe/o/openjdk-8-jre-dcevm/openjdk-8-jre-dcevm_8u112-1_amd64.deb && \
-    dpkg -i openjdk-8-jre-dcevm_8u112-1_amd64.deb
+RUN wget http://mirrors.kernel.org/ubuntu/pool/universe/o/openjdk-8-jre-dcevm/openjdk-8-jre-dcevm_8u112-2_amd64.deb && \
+    dpkg -i openjdk-8-jre-dcevm_8u112-2_amd64.deb
 
 # Install Tomcat 8
 ENV CATALINA_HOME=/usr/local/tomcat
