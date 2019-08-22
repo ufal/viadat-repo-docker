@@ -1,6 +1,6 @@
 <Context 
-  docBase="/srv/dspace-src/dspace/modules/solr/target/solr-6.0"
-  reloadable="true"
+  docBase="/srv/dspace/webapps/solr"
+  reloadable="false"
 >
 	<JarScanner scanClassPath="false" scanAllFiles="false" scanAllDirectories="false"/>
 	<Parameter name="dspace-config" override="false"

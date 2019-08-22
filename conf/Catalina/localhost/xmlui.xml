@@ -1,6 +1,6 @@
 <Context 
-  docBase="/srv/dspace-src/dspace/modules/xmlui/target/xmlui-6.0"
-  reloadable="true" 
+  docBase="/srv/dspace/webapps/xmlui"
+  reloadable="false" 
 >
 	<JarScanner scanClassPath="false" scanAllFiles="false" scanAllDirectories="false"/>
 	<Parameter name="dspace-config" override="false"

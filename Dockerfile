@@ -1,6 +1,12 @@
-FROM ubuntu:xenial
+#FROM ubuntu:xenial
+FROM dspace_maven_deps:latest
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+	httpie \
+	lsof \
+	htop \
+	less \
+	openssh-client \	
         ca-certificates \
         curl \
         vim \
@@ -11,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         software-properties-common \
         postgresql-client \
         openjdk-8-jdk \
+        libxml2-utils \
         ant \
         maven \
         unzip
@@ -22,7 +29,7 @@ WORKDIR /tmp
 
 #DCEVM installation
 #Since DCEVM for Xenial seems kind of broken, we download it from zetzy
-RUN wget http://mirrors.kernel.org/ubuntu/pool/universe/o/openjdk-8-jre-dcevm/openjdk-8-jre-dcevm_8u112-2_amd64.deb && \
+RUN http --follow GET https://mirrors.kernel.org/ubuntu/pool/universe/o/openjdk-8-jre-dcevm/openjdk-8-jre-dcevm_8u112-2_amd64.deb > openjdk-8-jre-dcevm_8u112-2_amd64.deb && \
     dpkg -i openjdk-8-jre-dcevm_8u112-2_amd64.deb
 
 # Install Tomcat 8
@@ -39,7 +46,7 @@ RUN mkdir -p /srv/dspace /srv/dspace-src
 ENV DSPACE_HOME=/srv/dspace
 ENV PATH=$DSPACE_HOME/bin:$PATH
 
-RUN mkdir /root/.m2
+#RUN mkdir /root/.m2
 #VOLUME /root/.m2
 
 
@@ -84,21 +91,18 @@ RUN export uid=1000 gid=1000 && \
 
 RUN chown -R developer $CATALINA_HOME
 
-COPY entrypoint.sh /
-RUN chmod +x /entrypoint.sh
-#ENTRYPOINT ["/entrypoint.sh"]
-
 #Install PSI Probe
-RUN wget https://github.com/psi-probe/psi-probe/releases/download/2.4.0/probe-2.4.0.zip -O probe.zip
-RUN unzip probe.zip
+#RUN wget https://github.com/psi-probe/psi-probe/releases/download/2.4.0/probe-2.4.0.zip -O probe.zip
+#RUN unzip probe.zip
 # RUN mv probe.war $CATALINA_HOME/webapps/probe.war
+RUN wget https://github.com/psi-probe/psi-probe/releases/download/3.2.0/probe.war -O $CATALINA_HOME/webapps/probe.war
 
 COPY conf $CATALINA_HOME/conf
 
-RUN wget https://deb.nodesource.com/setup_6.x -O -| sudo bash - \
-  && apt-get install nodejs -y
-
-RUN npm install -g grunt bower
+#RUN wget https://deb.nodesource.com/setup_6.x -O -| sudo bash - \
+#  && apt-get install nodejs -y
+#
+#RUN npm install -g grunt bower
 
 ###
 # Installing an IDE
@@ -126,16 +130,15 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 RUN chown -R developer:developer $CATALINA_HOME/
 USER developer
 
-USER developer
 #Install ruby deps
 RUN sudo apt-get install -y bison build-essential zlib1g-dev libssl-dev libxml2-dev git-core
-RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - \
-  && curl -sSL https://raw.githubusercontent.com/wayneeseguin/rvm/stable/binscripts/rvm-installer | bash -s stable --ruby
-
-RUN bash -c "source ~/.profile \
-  && gem install sass -v 3.3.14  \
-  && gem install compass -v 1.0.1"
-
+#RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import - \
+#  && curl -sSL https://raw.githubusercontent.com/wayneeseguin/rvm/stable/binscripts/rvm-installer | bash -s stable --ruby
+#
+#RUN bash -c "source ~/.profile \
+#  && gem install sass -v 3.3.14  \
+#  && gem install compass -v 1.0.1"
+#
 RUN echo "source ~/.profile" >> ~/.bashrc
 
 ###
@@ -143,8 +146,20 @@ RUN echo "source ~/.profile" >> ~/.bashrc
 ###
 RUN sudo rm -rf /var/lib/apt/lists/*
 
-#Link DSpace binary
-RUN sudo ln -s /srv/dspace/bin/dspace /usr/bin/dspace
+USER root
+RUN chown -R developer /m2 && ln -s /m2 /home/developer/.m2
+#COPY dspace-src /srv/dspace-src
+#RUN ln -nsf /srv/dspace-src /srv/dspace-src/utilities/project_helpers/sources
+COPY dspace_after_install_init /dspace_after_install_init
+WORKDIR /dspace_after_install_init
+RUN chmod +x ./init.sh && chown -R developer /srv && chown -R developer /opt
+# deploy_guru can't work during build, no postgres available
+#RUN ./init.sh
+
+
+USER developer
+
+
 
 WORKDIR /srv/dspace-src
 

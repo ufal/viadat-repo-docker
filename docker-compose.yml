@@ -1,16 +1,13 @@
-version: '2'
+version: '2.4'
 services:
   # Postgres database
   postgres:
     build: ./postgres
     ports:
       - 5432:5432
-    environment:
-      - POSTGRES_DB=dspace
-      - POSTGRES_USER=dspace
-      - POSTGRES_PASSWORD=dspace
     tty: true
     stdin_open: true
+    platform: linux
   # DSpace
   dspace-dev:
     build: .
@@ -25,10 +22,20 @@ services:
       - DISPLAY=${DISPLAY}
     volumes:
       # Path on the host, relative to the Compose file
-      - ./dspace-build:/srv/dspace
-      - ./dspace-src:/srv/dspace-src
-      - ./m2-repo:/home/developer/.m2
+      #- type: bind
+      #  #source: c:/Users/ko_ok/sources/dspace-dev-docker/dspace-build
+      #  source: ./dspace-build
+      #  target: /srv/dspace
+      - type: bind
+        #source: c:/Users/ko_ok/sources/viadat-repo
+        source: /c/Users/ko_ok/sources/viadat-repo
+        target: /srv/dspace-src
+        # - type: bind
+        # - #source: c:/Users/ko_ok/.m2
+        # - source: /c/Users/ko_ok/.m2
+        # - target: /home/developer/.m2
       - /tmp/.X11-unix:/tmp/.X11-unix
     command: /bin/bash
     tty: true
     stdin_open: true
+    platform: linux

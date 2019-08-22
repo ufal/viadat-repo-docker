@@ -1,6 +1,7 @@
-export CATALINA_OPTS="$CATALINA_OPTS -Xms512m"
-export CATALINA_OPTS="$CATALINA_OPTS -Xmx2048m"
-export CATALINA_OPTS="$CATALINA_OPTS -XX:MaxPermSize=1024m"
+#export CATALINA_OPTS="$CATALINA_OPTS -Xms512m"
+export CATALINA_OPTS="$CATALINA_OPTS -Xms1024m"
+export CATALINA_OPTS="$CATALINA_OPTS -Xmx4096m"
+#export CATALINA_OPTS="$CATALINA_OPTS -XX:MaxPermSize=1024m"
 
 #Use non-blocking entropy source
 export CATALINA_OPTS="$CATALINA_OPTS -Djava.security.egd=file:/dev/./urandom"
