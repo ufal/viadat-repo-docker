@@ -1,12 +1,15 @@
 #!/bin/bash
 function init_repo {
-        ADMIN_EMAIL=dspace@lindat.cz
-        IMPORT_DEF=/dspace_after_install_init/dspace-import-structure.xml
-        IMPORT_OUTPUT=/tmp/import_output.xml
-        dspace database migrate
-        dspace create-administrator -e "$ADMIN_EMAIL" -f "Mr." -l "Lindat" -p "dspace" -c "en"
-        dspace structure-builder -f $IMPORT_DEF -o $IMPORT_OUTPUT -e "$ADMIN_EMAIL"
-        dspace dsrun cz.cuni.mff.ufal.dspace.runnable.InitTemplates
+        adm_email=`psql -t -U dspace -h postgres -c 'select email from eperson where eperson_id = 1;'`
+        if [ -z "$adm_email" ]; then
+                ADMIN_EMAIL=dspace@lindat.cz
+                IMPORT_DEF=/dspace_after_install_init/dspace-import-structure.xml
+                IMPORT_OUTPUT=/tmp/import_output.xml
+                dspace database migrate
+                dspace create-administrator -e "$ADMIN_EMAIL" -f "Mr." -l "Lindat" -p "dspace" -c "en"
+                dspace structure-builder -f $IMPORT_DEF -o $IMPORT_OUTPUT -e "$ADMIN_EMAIL"
+                dspace dsrun cz.cuni.mff.ufal.dspace.runnable.InitTemplates
+        fi
 }
 
 function deploy_repo {

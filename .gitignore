@@ -1,1 +1,6 @@
 *.sw[pon]
+tests/selenium-screenshot-*.png
+tests/log.html
+tests/output.xml
+tests/report.html
+tests/geckodriver.log
