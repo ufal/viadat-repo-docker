@@ -1,7 +1,7 @@
 #!/bin/bash
 function init_repo {
         ADMIN_EMAIL=dspace@lindat.cz
-        IMPORT_DEF=dspace-import-structure.xml
+        IMPORT_DEF=/dspace_after_install_init/dspace-import-structure.xml
         IMPORT_OUTPUT=/tmp/import_output.xml
         dspace database migrate
         dspace create-administrator -e "$ADMIN_EMAIL" -f "Mr." -l "Lindat" -p "dspace" -c "en"

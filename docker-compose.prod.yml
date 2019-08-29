@@ -1,0 +1,25 @@
+version: '2.4'
+services:
+  # Postgres database
+  postgres:
+    build: ./postgres
+    ports:
+      - 5432:5432
+    tty: true
+    stdin_open: true
+    platform: linux
+  # DSpace
+  dspace-dev:
+    build:
+        context: .
+    ports:
+      - 8080:8080
+      - 8000:8000
+      #Remote Debugger
+      - 1043:1043
+    depends_on:
+      - postgres
+    command: bash -c "/dspace_after_install_init/init.sh && /usr/local/tomcat/bin/catalina.sh jpda run"
+    tty: true
+    stdin_open: true
+    platform: linux

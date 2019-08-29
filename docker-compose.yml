@@ -10,7 +10,9 @@ services:
     platform: linux
   # DSpace
   dspace-dev:
-    build: .
+    build:
+        context: .
+        target: base
     ports:
       - 8080:8080
       - 8000:8000

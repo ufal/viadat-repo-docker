@@ -1,4 +1,5 @@
-dspace-src
+#dspace-src
+dspace-src/**/target
 dspace-build
 #m2-repo probably needs to be commented if building Dockerfile.maven
 m2-repo

@@ -125,4 +125,6 @@ if ! shopt -oq posix; then
 fi
 [ -r /root/.byobu/prompt ] && . /root/.byobu/prompt   #byobu-prompt#
 
-
+if [ -f ~/.profile ]; then
+    . ~/.profile
+fi
