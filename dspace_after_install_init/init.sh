@@ -1,5 +1,19 @@
 #!/bin/bash
+set -o verbose
+set -o xtrace
 function init_repo {
+        for i in `seq 1 11`; do
+            if psql -t -U dspace -h postgres -c 'select 1;' >/dev/null; then
+                break
+            else
+                >&2 echo "Waiting for the database ${i}s"
+                sleep 1
+            fi
+        done
+        if [ $i -eq 11 ]; then
+            >&2 echo "Couldn't connect to database under 10s."
+            exit 1
+        fi
         adm_email=`psql -t -U dspace -h postgres -c 'select email from eperson where eperson_id = 1;'`
         if [ -z "$adm_email" ]; then
                 ADMIN_EMAIL=dspace@lindat.cz

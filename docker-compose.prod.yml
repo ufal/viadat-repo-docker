@@ -8,6 +8,8 @@ services:
     tty: true
     stdin_open: true
     platform: linux
+    volumes:
+      - pgdata:/var/lib/postgresql/data
   # DSpace
   dspace-dev:
     build:
@@ -23,3 +25,12 @@ services:
     tty: true
     stdin_open: true
     platform: linux
+    volumes:
+      - assetstore:/srv/dspace/assetstore
+      - solr:/srv/dspace/solr
+      - log:/srv/dspace/log
+volumes:
+  pgdata:
+  assetstore:
+  solr:
+  log:

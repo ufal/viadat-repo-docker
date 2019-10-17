@@ -1,4 +1,5 @@
 *.sw[pon]
+*.pyc
 tests/selenium-screenshot-*.png
 tests/log.html
 tests/output.xml

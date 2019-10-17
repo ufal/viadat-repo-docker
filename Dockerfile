@@ -119,16 +119,17 @@ EXPOSE 8000:8000
 
 
 FROM base as copied
-USER root
 COPY dspace-src /srv/dspace-src
-USER developer
 WORKDIR /srv/dspace-src/utilities/project_helpers/scripts
 RUN make install_libs deploy_guru && rm -rf /srv/dspace-src ~/.m2
 
 FROM base as final
-USER root
 COPY --from=copied /srv/dspace /srv/dspace
+COPY --from=copied /opt/lindat-common /opt/lindat-common
+USER root
+run mkdir /srv/dspace/assetstore && mkdir /srv/dspace/log && chown -R developer:developer /srv
 USER developer
 WORKDIR /srv/dspace
 
 CMD ["/usr/local/tomcat/bin/catalina.sh", "jpda", "run"]
+VOLUME ["/srv/dspace/assetstore",  "/srv/dspace/log",  "/srv/dspace/solr"]
