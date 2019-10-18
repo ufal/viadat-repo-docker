@@ -1,5 +1,4 @@
 FROM ubuntu:xenial as base
-#FROM dspace_maven_deps:latest
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         httpie \
@@ -56,12 +55,12 @@ ENV PATH=$CATALINA_HOME/bin:$PATH
 ###
 
 # Configure remote debugging and extra memory
-COPY setenv.sh $CATALINA_HOME/bin
+COPY conf/tomcat/setenv.sh $CATALINA_HOME/bin
 
-COPY conf $CATALINA_HOME/conf
+COPY conf/tomcat/conf $CATALINA_HOME/conf
 
 #Create DSpace folders
-RUN mkdir -p /srv/dspace /srv/dspace-src
+RUN mkdir -p /srv/dspace
 ENV DSPACE_HOME=/srv/dspace
 ENV PATH=$DSPACE_HOME/bin:$PATH
 
@@ -70,12 +69,12 @@ ENV PATH=$DSPACE_HOME/bin:$PATH
 ###
 
 #Configure colors and autocompletion
-COPY bashrc /root/.bashrc
-COPY bashrc /home/developer/.bashrc
+COPY conf/bash/bashrc /root/.bashrc
+COPY conf/bash/bashrc /home/developer/.bashrc
 
 #Configure some useful aliases
-COPY bash_aliases /root/.bash_aliases
-COPY bash_aliases /home/developer/.bash_aliases
+COPY conf/bash/bash_aliases /root/.bash_aliases
+COPY conf/bash/bash_aliases /home/developer/.bash_aliases
 
 ENV DSPACE_HOME=/srv/dspace
 ENV PATH=$DSPACE_HOME/bin:$PATH
@@ -119,7 +118,12 @@ EXPOSE 8000:8000
 
 
 FROM base as copied
-COPY dspace-src /srv/dspace-src
+RUN git clone -b local_changes https://github.com/kosarko/DSpace /srv/dspace-src
+# COPY configs including changes to security of webapps
+COPY conf/repo/local.properties /srv/dspace-src
+COPY conf/repo/variable.makefile /srv/dspace-src/utilities/project_helpers/config
+COPY conf/repo/webapp/rest/web.xml /srv/dspace-src/dspace-rest/src/main/webapp/WEB-INF/web.xml
+COPY conf/repo/webapp/solr/web.xml /srv/dspace-src/dspace-solr/src/main/webapp/WEB-INF/web.xml
 WORKDIR /srv/dspace-src/utilities/project_helpers/scripts
 RUN make install_libs deploy_guru && rm -rf /srv/dspace-src ~/.m2
 
