@@ -7,11 +7,11 @@ function init_repo {
                 break
             else
                 >&2 echo "Waiting for the database ${i}s"
-                sleep 1
+                sleep 2
             fi
         done
         if [ $i -eq 11 ]; then
-            >&2 echo "Couldn't connect to database under 10s."
+            >&2 echo "Couldn't connect to database under 20s."
             exit 1
         fi
         adm_email=`psql -t -U dspace -h postgres -c 'select email from eperson where eperson_id = 1;'`
