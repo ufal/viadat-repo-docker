@@ -118,7 +118,7 @@ EXPOSE 8000:8000
 
 
 FROM base as copied
-RUN git clone -b local_changes https://github.com/kosarko/DSpace /srv/dspace-src
+RUN git clone -b viadat https://github.com/ufal/DSpace /srv/dspace-src
 # COPY configs including changes to security of webapps
 COPY conf/repo/local.properties /srv/dspace-src
 COPY conf/repo/variable.makefile /srv/dspace-src/utilities/project_helpers/config
